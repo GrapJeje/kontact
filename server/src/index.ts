@@ -1,157 +1,163 @@
 import express, {Request, Response} from "express";
 import cors from "cors";
 import pool from "./hooks/Pool";
+import jwt from 'jsonwebtoken';
 
 const bcrypt = require('bcrypt');
 const app = express();
 const port = 3001;
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(express.json());
-app.post("/api/register", (req: Request, res: Response) => {
-    const {username, password, second_password} = req.body;
+
+app.post("/api/register", async (req: Request, res: Response) => {
+    const { username, password, second_password } = req.body;
+
+    if (!username || !password || !second_password) {
+        return res.status(400).json({
+            success: false,
+            message: "Alle velden zijn verplicht"
+        });
+    }
 
     if (password !== second_password) {
-        res.status(400).send("Wachtwoorden komen niet overeen");
-        return;
+        return res.status(400).json({
+            success: false,
+            message: "Wachtwoorden komen niet overeen"
+        });
     }
 
-    pool.query(
-        "SELECT username FROM users WHERE username = ?",
-        [username],
-        (err, results) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send("Server error");
-                return;
-            }
+    try {
+        const [users]: any = await pool.query(
+            "SELECT id FROM users WHERE username = ?",
+            [username]
+        );
 
-            const rows = results as any[];
-            if (rows.length > 0) {
-                res.status(400).send("Gebruikersnaam bestaat al");
-                return;
-            }
-        }
-    );
-
-    const saltRounds = 10;
-
-    bcrypt.genSalt(saltRounds, (err: any, salt: any) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send("Server error");
-            return;
+        if (users.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Gebruikersnaam bestaat al"
+            });
         }
 
-        bcrypt.hash(password, salt, (err: any, hash: any) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send("Server error");
-                return;
-            }
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
 
-            pool.query(
-                "INSERT INTO users (username, password) VALUES (?, ?)",
-                [username, hash],
-                (err) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send("Server error");
-                        return;
-                    }
+        const [result]: any = await pool.query(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            [username, hash]
+        );
 
-                    res.status(200).send("Registratie succesvol");
-                }
-            );
+        const [newUser]: any = await pool.query(
+            "SELECT id, username FROM users WHERE id = ?",
+            [result.insertId]
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: "Registratie succesvol",
+            user: newUser[0]
         });
 
-    });
-});
-
-app.post("/api/login", (req: Request, res: Response) => {
-    const {username, password} = req.body;
-
-    pool.query("SELECT * FROM users WHERE username = ?", [username], (err, results) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send("Server error");
-            return;
-        }
-
-        const user = results[0];
-        if (!user) {
-            res.status(401).send("Ongeldige gebruikersnaam of wachtwoord");
-            return;
-        }
-
-        bcrypt.compare(password, user.password, (err: any, isMatch: any) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send("Server error");
-                return;
-            }
-
-            if (!isMatch) {
-                res.status(401).send("Ongeldige gebruikersnaam of wachtwoord");
-                return;
-            }
-
-            res.status(200).send("Login succesvol");
+    } catch (error) {
+        console.error("Register error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error tijdens registratie",
+            error: error.message
         });
-    });
-});
-
-app.get("/api/getToken", (req: Request, res: Response) => {
-    const array = new Uint8Array(length);
-    crypto.getRandomValues(array);
-    res.status(200).send(Array.from(array, b => b.toString(16).padStart(2, '0')).join(''));
-    return;
-});
-
-app.get("/api/user/getByToken", (req: Request, res: Response) => {
-    const token = req.query.token as string;
-
-    if (!token) {
-        res.status(400).send("Token is verplicht")
-        return;
     }
+});
 
-    pool.query("SELECT * FROM sessions WHERE token = ?", [token], (err, results) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send("Server error");
-            return;
+app.post("/api/login", async (req: Request, res: Response) => {
+    console.log("Login request ontvangen:", req.body); // Log de ontvangen data
+
+    try {
+        console.log("Database query uitvoeren...");
+        const [users]: any = await pool.query(
+            "SELECT id, username, password FROM users WHERE username = ?",
+            [req.body.username]
+        );
+        console.log("Query resultaat:", users);
+
+        if (!users || users.length === 0) {
+            console.log("Geen gebruiker gevonden");
+            return res.status(401).json({ success: false, message: "Ongeldige credentials" });
         }
 
-        if (results.length === 0) return res.status(404).send("Gebruiker niet gevonden");
+        const user = users[0];
+        console.log("Gebruiker gevonden:", user.id);
 
-        const user = results[0];
-        res.status(200).send(res.json(user));
-        return ;
-    });
+        console.log("Wachtwoord vergelijken...");
+        const isMatch = await bcrypt.compare(req.body.password, user.password);
+        if (!isMatch) {
+            console.log("Wachtwoord komt niet overeen");
+            return res.status(401).json({ success: false, message: "Ongeldige credentials" });
+        }
+
+        console.log("JWT aanmaken...");
+        const token = jwt.sign(
+            { userId: user.id, username: user.username },
+            process.env.JWT_SECRET || 'fallback_secret',
+            { expiresIn: '1h' }
+        );
+        console.log("Token aangemaakt:", token);
+
+        console.log("Sessie opslaan...");
+        await pool.query(
+            "INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))",
+            [user.id, token]
+        );
+        console.log("Sessie opgeslagen");
+
+        res.json({
+            success: true,
+            message: "Login succesvol",
+            user: { id: user.id, username: user.username },
+            token
+        });
+
+    } catch (error) {
+        console.error("Fout tijdens login:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error tijdens inloggen",
+            error: error.message // Voeg specifieke error toe voor debugging
+        });
+    }
 });
 
-app.get("/api/user/setToken", (req: Request, res: Response) => {
-    const token = req.query.token as string;
-    const id = req.query.id as string;
+app.get("/api/validate-token", async (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
 
-    if (!token || !id) {
-        res.status(400).send("Token en id is verplicht")
-        return;
-    }
+    if (!authHeader) return res.status(401).json({ valid: false });
 
-    pool.query(
-        "INSERT INTO sessions (token, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE token = VALUES(token)",
-        [token, id],
-        (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send("Database error");
+    const token = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+
+        const [sessions]: any = await pool.query(
+            "SELECT * FROM sessions WHERE token = ? AND expires_at > NOW()",
+            [token]
+        );
+
+        if (sessions.length === 0) return res.status(401).json({ valid: false });
+
+        return res.json({
+            valid: true,
+            user: {
+                id: decoded.userId,
+                username: decoded.username
             }
+        });
 
-            return res.status(200).send("Token opgeslagen");
-        }
-    );
+    } catch (error) {
+        return res.status(401).json({ valid: false });
+    }
 });
 
 app.get("/api/users", (req: Request, res: Response) => {

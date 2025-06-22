@@ -21,38 +21,30 @@ function Register() {
         setMessage("");
 
         try {
-            const res = await fetch("http://localhost:3001/api/register", {
+            const response = await fetch("http://localhost:3001/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(form),
+                body: JSON.stringify({
+                    username: form.username,
+                    password: form.password,
+                    second_password: form.second_password
+                }),
             });
 
-            const text = await res.text();
-            if (res.ok) {
-                setMessage("Registratie succesvol!");
-                setForm({ username: "", password: "", second_password: "" });
-            } else setMessage(text);
-        } catch (err) {
-            setMessage("Er is iets misgegaan.");
-            console.error(err);
-        }
+            const data = await response.json();
 
-        try {
-            const res = await fetch("http://localhost:3001/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(form),
-            });
+            if (!response.ok) {
+                throw new Error(data.message || "Registratie mislukt");
+            }
 
-            const text = await res.text();
-            if (res.ok) {
-                setMessage("Login succesvol!");
-                setForm({ username: "", password: "", second_password: "" });
-                navigate("/");
-            } else setMessage(text);
+            setMessage("Registratie succesvol! Je kunt nu inloggen.");
+            setForm({ username: "", password: "", second_password: "" });
+
+            setTimeout(() => navigate("/login"), 2000);
+
         } catch (err) {
-            setMessage("Er is iets misgegaan.");
-            console.error(err);
+            setMessage(err.message || "Er is een fout opgetreden bij de registratie");
+            console.error("Registratie fout:", err);
         }
     }
 

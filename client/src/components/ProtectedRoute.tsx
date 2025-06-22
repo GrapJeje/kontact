@@ -7,7 +7,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const isLoggedIn = useAuth();
+    const { isLoggedIn, isLoading } = useAuth();
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     if (!isLoggedIn) return <Navigate to="/login" replace={true} />;
     return children;

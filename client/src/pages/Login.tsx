@@ -15,7 +15,7 @@ function Login() {
 
     const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage("");
 
@@ -24,19 +24,35 @@ function Login() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(form),
+                credentials: "include"
             });
 
-            const text = await res.text();
-            if (res.ok) {
-                setMessage("Login succesvol!");
-                setForm({ username: "", password: "" });
-                navigate("/");
-            } else setMessage(text);
-        } catch (err) {
-            setMessage("Er is iets misgegaan.");
-            console.error(err);
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => null);
+                setMessage(errorData?.message || "Inloggen mislukt.");
+                return;
+            }
+
+            const data = await res.json();
+            const userId = data?.user?.id;
+            const token = data?.token;
+
+            if (!userId || !token) {
+                setMessage("Authenticatiegegevens ontbreken.");
+                return;
+            }
+
+            localStorage.setItem("authToken", token);
+
+            setMessage("Login succesvol!");
+            setForm({ username: "", password: "" });
+            navigate("/");
+
+        } catch (error) {
+            console.error("Fout bij het inloggen:", error);
+            setMessage("Er is iets misgegaan tijdens het inloggen.");
         }
-    }
+    };
 
     const handleChange = (e) => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,7 +60,7 @@ function Login() {
 
     return (
         <div>
-            <h1>Register</h1>
+            <h1>Login</h1>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Username:<br />
