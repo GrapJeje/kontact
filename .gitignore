@@ -4,3 +4,11 @@
 node_modules/
 client/node_modules/
 server/node_modules/
+
+# IDE configuratie (JetBrains, VS Code)
+.idea/
+.vscode/
+client/.idea/
+client/.vscode/
+server/.idea/
+server/.vscode/
