@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import mysql from "mysql2";
 
@@ -13,13 +13,6 @@ const pool = mysql.createPool({
     user: "root",
     password: "admin",
     database: "kontact",
-});
-
-app.get("/api/users", (req: Request, res: Response) => {
-    pool.query("SELECT * FROM users", (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
-    });
 });
 
 app.listen(port, () => {
