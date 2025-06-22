@@ -73,45 +73,28 @@ app.post("/api/register", async (req: Request, res: Response) => {
 });
 
 app.post("/api/login", async (req: Request, res: Response) => {
-    console.log("Login request ontvangen:", req.body); // Log de ontvangen data
-
     try {
-        console.log("Database query uitvoeren...");
         const [users]: any = await pool.query(
             "SELECT id, username, password FROM users WHERE username = ?",
             [req.body.username]
         );
-        console.log("Query resultaat:", users);
 
-        if (!users || users.length === 0) {
-            console.log("Geen gebruiker gevonden");
-            return res.status(401).json({ success: false, message: "Ongeldige credentials" });
-        }
+        if (!users || users.length === 0) return res.status(401).json({ success: false, message: "Ongeldige credentials" });
 
         const user = users[0];
-        console.log("Gebruiker gevonden:", user.id);
-
-        console.log("Wachtwoord vergelijken...");
         const isMatch = await bcrypt.compare(req.body.password, user.password);
-        if (!isMatch) {
-            console.log("Wachtwoord komt niet overeen");
-            return res.status(401).json({ success: false, message: "Ongeldige credentials" });
-        }
+        if (!isMatch) return res.status(401).json({ success: false, message: "Ongeldige credentials" });
 
-        console.log("JWT aanmaken...");
         const token = jwt.sign(
             { userId: user.id, username: user.username },
             process.env.JWT_SECRET || 'fallback_secret',
             { expiresIn: '1h' }
         );
-        console.log("Token aangemaakt:", token);
 
-        console.log("Sessie opslaan...");
         await pool.query(
             "INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))",
             [user.id, token]
         );
-        console.log("Sessie opgeslagen");
 
         res.json({
             success: true,
@@ -125,7 +108,7 @@ app.post("/api/login", async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: "Server error tijdens inloggen",
-            error: error.message // Voeg specifieke error toe voor debugging
+            error: error.message
         });
     }
 });
@@ -160,11 +143,45 @@ app.get("/api/validate-token", async (req: Request, res: Response) => {
     }
 });
 
-app.get("/api/users", (req: Request, res: Response) => {
-    pool.query("SELECT * FROM users", (err, results) => {
-        if (err) return res.status(500).json({error: err.message});
-        res.json(results);
-    });
+app.post("/api/contacts/all", async (req: Request, res: Response) => {
+    const { id } = req.body;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    if (!id) return res.status(400).json({ success: false, message: "User ID is required" });
+
+    try {
+        const [contacts]: any = await pool.query(
+            `SELECT * FROM contacts WHERE user_id = ? ORDER BY id DESC LIMIT ? OFFSET ?`,
+            [id, limit, offset]
+        );
+
+        if (contacts.length === 0) return res.json([]);
+
+        const contactIds = contacts.map((c: any) => c.id);
+
+        const [addresses]: any = await pool.query(
+            `SELECT * FROM addresses WHERE contact_id IN (?)`,
+            [contactIds]
+        );
+
+        const contactsWithAddresses = contacts.map((contact: any) => {
+            const contactAddress = addresses.find((addr: any) => addr.contact_id === contact.id);
+            return {
+                ...contact,
+                address: contactAddress || null
+            };
+        });
+
+        res.json(contactsWithAddresses);
+    } catch (error: any) {
+        console.error("Fout bij ophalen van contacten (all):", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message
+        });
+    }
 });
 
 app.listen(port, () => {
