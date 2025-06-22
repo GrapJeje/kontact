@@ -1,9 +1,12 @@
 import {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
     useEffect(() => {
         document.title = "Kontacts - Register";
     }, []);
+
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         username: "",
@@ -34,6 +37,23 @@ function Register() {
             console.error(err);
         }
 
+        try {
+            const res = await fetch("http://localhost:3001/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+
+            const text = await res.text();
+            if (res.ok) {
+                setMessage("Login succesvol!");
+                setForm({ username: "", password: "", second_password: "" });
+                navigate("/");
+            } else setMessage(text);
+        } catch (err) {
+            setMessage("Er is iets misgegaan.");
+            console.error(err);
+        }
     }
 
     const handleChange = (e) => {

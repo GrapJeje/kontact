@@ -70,6 +70,88 @@ app.post("/api/register", (req: Request, res: Response) => {
 
 app.post("/api/login", (req: Request, res: Response) => {
     const {username, password} = req.body;
+
+    pool.query("SELECT * FROM users WHERE username = ?", [username], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send("Server error");
+            return;
+        }
+
+        const user = results[0];
+        if (!user) {
+            res.status(401).send("Ongeldige gebruikersnaam of wachtwoord");
+            return;
+        }
+
+        bcrypt.compare(password, user.password, (err: any, isMatch: any) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Server error");
+                return;
+            }
+
+            if (!isMatch) {
+                res.status(401).send("Ongeldige gebruikersnaam of wachtwoord");
+                return;
+            }
+
+            res.status(200).send("Login succesvol");
+        });
+    });
+});
+
+app.get("/api/getToken", (req: Request, res: Response) => {
+    const array = new Uint8Array(length);
+    crypto.getRandomValues(array);
+    res.status(200).send(Array.from(array, b => b.toString(16).padStart(2, '0')).join(''));
+    return;
+});
+
+app.get("/api/user/getByToken", (req: Request, res: Response) => {
+    const token = req.query.token as string;
+
+    if (!token) {
+        res.status(400).send("Token is verplicht")
+        return;
+    }
+
+    pool.query("SELECT * FROM sessions WHERE token = ?", [token], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send("Server error");
+            return;
+        }
+
+        if (results.length === 0) return res.status(404).send("Gebruiker niet gevonden");
+
+        const user = results[0];
+        res.status(200).send(res.json(user));
+        return ;
+    });
+});
+
+app.get("/api/user/setToken", (req: Request, res: Response) => {
+    const token = req.query.token as string;
+    const id = req.query.id as string;
+
+    if (!token || !id) {
+        res.status(400).send("Token en id is verplicht")
+        return;
+    }
+
+    pool.query(
+        "INSERT INTO sessions (token, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE token = VALUES(token)",
+        [token, id],
+        (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Database error");
+            }
+
+            return res.status(200).send("Token opgeslagen");
+        }
+    );
 });
 
 app.get("/api/users", (req: Request, res: Response) => {
