@@ -11,16 +11,29 @@ function ContactBanner({
                        }: ContactBannerProps) {
     return (
         <div className="contact-banner">
-            <h1>{name}</h1>
-            <h2>{username}</h2>
-            <h3>{email}</h3>
-            {address && (
-                <p>
-                    {address.street}, {address.city}, {address.province} {address.postalCode}
-                    , {address.country}
-                </p>
-            )}
-            <p>Relationship: {relationship}</p>
+            <div className="contact-banner-avatar">
+                {name?.charAt(0)?.toUpperCase() || '?'}
+            </div>
+
+            <div className="contact-banner-content">
+                <h1 className="contact-banner-name">{name}</h1>
+                <h2 className="contact-banner-username">@{username}</h2>
+                <h3 className="contact-banner-email">{email}</h3>
+
+                {address && (
+                    <p className="contact-banner-address">
+                        {address.street}, {address.city}, {address.province} {address.postalCode}, {address.country}
+                    </p>
+                )}
+
+                <p className="contact-banner-relationship">{relationship}</p>
+            </div>
+
+            <div className="contact-banner-actions">
+                <button className="contact-banner-action contact-banner-action--edit" title="Edit">
+                    <img src="/contacts/edit.svg" alt="Add" width="24" height="24"/>
+                </button>
+            </div>
         </div>
     );
 }

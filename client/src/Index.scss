@@ -7,3 +7,48 @@
 body {
     font-family: 'Inter', sans-serif;
 }
+
+:root {
+  /* Primary */
+  --primary: #2563eb;
+  --primary-light: #60a5fa;
+  --primary-dark: #1d4ed8;
+
+  /* Secondary */
+  --secondary: #64748b;
+  --secondary-light: #94a3b8;
+  --secondary-dark: #475569;
+
+  /* Accent */
+  --accent: #d946ef;
+  --accent-light: #e879f9;
+  --accent-dark: #c026d3;
+
+  /* Neutrals */
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --black: #000000;
+
+  /* Status */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+
+  /* Semantic */
+  --background: var(--white);
+  --surface: var(--gray-50);
+  --border: var(--gray-200);
+  --text: var(--gray-900);
+  --text-muted: var(--gray-500);
+
+  /* Utils */
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --radius: 0.5rem;
+}
