@@ -1,10 +1,11 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {BrowserRouter, Routes, Route} from "react-router-dom";
 import "./Index.scss";
 import Contacts from "./pages/Contacts";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import User from "./pages/User";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute.tsx";
 import New from "./pages/New.tsx";
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
                     path="/"
                     element={
                         <ProtectedRoute>
-                            <Contacts />
+                            <Contacts/>
                         </ProtectedRoute>
                     }
                 />
@@ -23,17 +24,29 @@ function App() {
                     path="/new"
                     element={
                         <ProtectedRoute>
-                            <New />
+                            <New/>
                         </ProtectedRoute>
                     }
                 />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <Login/>
+                        </PublicRoute>
+                    }/>
+                <Route
+                    path="/register"
+                    element={
+                        <PublicRoute>
+                            <Register/>
+                        </PublicRoute>
+                    }/>
                 <Route
                     path="/user/:id"
                     element={
                         <ProtectedRoute>
-                            <User />
+                            <User/>
                         </ProtectedRoute>
                     }
                 />
