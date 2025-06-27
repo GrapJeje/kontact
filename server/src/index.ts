@@ -197,6 +197,52 @@ app.post("/api/contacts/all", async (req: Request, res: Response) => {
     }
 });
 
+app.post("/api/contacts/verifyperson", async (req: Request, res: Response) => {
+    const { contact_id, user_id } = req.body;
+
+    if (!contact_id || !user_id || isNaN(Number(contact_id)) || isNaN(Number(user_id))) {
+        return res.status(400).json({
+            success: false,
+            message: "Ongeldige ID's - zowel contact_id als user_id moeten numerieke waarden zijn"
+        });
+    }
+
+    try {
+        interface ContactResult {
+            id: number;
+        }
+
+        const [contacts]: [ContactResult[]] = await pool.query(
+            `SELECT id FROM contacts WHERE id = ? AND user_id = ?`,
+            [contact_id, user_id]
+        );
+
+        if (contacts.length === 0) {
+            return res.json({
+                success: true,
+                valid: false,
+                message: "Geen overeenkomend contact gevonden voor deze gebruiker"
+            });
+        }
+
+        return res.json({
+            success: true,
+            valid: true,
+            contact: contacts[0]
+        });
+
+    } catch (error: unknown) {
+        console.error("Fout bij verifiëren van contact:", error);
+        const errorMessage = error instanceof Error ? error.message : 'Onbekende fout';
+
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: errorMessage
+        });
+    }
+});
+
 app.post("/api/logout", async (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
 

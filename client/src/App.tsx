@@ -7,6 +7,7 @@ import User from "./pages/User";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute.tsx";
 import New from "./pages/New.tsx";
+import NotFound from "./pages/404.tsx";
 
 function App() {
     return (
@@ -50,6 +51,7 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     );

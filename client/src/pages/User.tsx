@@ -1,14 +1,38 @@
 import {useNavigate, useParams} from "react-router-dom";
 import { useEffect } from "react";
 import Header from "../components/Header.tsx";
+import useAuth from "../hooks/useAuth.ts";
 
 function User() {
+    const { user } = useAuth();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
     useEffect(() => {
         document.title = "Kontact - User " + id;
-    }, [id]);
+
+        const verifyUser = async () => {
+            if (!user?.id) return;
+
+            try {
+                const res = await fetch("http://localhost:3001/api/contacts/verifyperson", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({contact_id: id ,user_id: user.id}),
+                    credentials: "include"
+                });
+
+                if (!res.ok) navigate('/');
+
+                const data = await res.json();
+                if (!data.valid) navigate('/');
+            } catch (error) {
+                console.error("Fout bij het verkrijgen van alle contacten: ", error);
+            }
+        }
+
+        verifyUser();
+    }, [user?.id, id, navigate]);
 
     return (
         <div>
