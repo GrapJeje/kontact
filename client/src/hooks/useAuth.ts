@@ -16,13 +16,11 @@ function useAuth() {
 
     const validateToken = async (token: string): Promise<boolean> => {
         try {
-            // Eerst JWT verifiëren
             const decoded = jwtDecode(token) as DecodedToken;
             if (Date.now() >= decoded.exp * 1000) {
                 return false;
             }
 
-            // Dan server-side validatie
             const response = await fetch("http://localhost:3001/api/validate-token", {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -45,7 +43,6 @@ function useAuth() {
     const logout = async () => {
         const token = localStorage.getItem("authToken");
 
-        // Verwijder token onmiddellijk uit localStorage
         localStorage.removeItem("authToken");
         setIsLoggedIn(false);
         setUser(null);

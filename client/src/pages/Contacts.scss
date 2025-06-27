@@ -173,11 +173,12 @@
     padding: 1rem;
     margin-bottom: 0.75rem;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
     box-shadow: var(--shadow);
     transition: all 0.2s ease;
     cursor: pointer;
+    min-height: 80px;
 
     &:hover {
       background-color: var(--gray-100);
@@ -196,53 +197,62 @@
       justify-content: center;
       color: white;
       font-weight: 600;
-      font-size: 1.25rem;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
       flex-shrink: 0;
     }
 
     &-content {
       flex: 1;
       min-width: 0;
+      overflow: hidden;
     }
 
     &-name {
-      font-size: 1.125rem;
+      font-size: clamp(1rem, 3vw, 1.125rem);
       font-weight: 600;
       color: var(--text);
       margin: 0 0 0.25rem 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      line-height: 1.2;
     }
 
     &-username {
-      font-size: 0.875rem;
+      font-size: clamp(0.8rem, 2.5vw, 0.875rem);
       color: var(--primary);
       margin: 0 0 0.25rem 0;
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &-phoneNumber {
-      font-size: 0.875rem;
+      font-size: clamp(0.75rem, 2.5vw, 0.875rem);
       color: var(--primary-dark);
       margin: 0 0 0.25rem 0;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       &::before {
         content: '';
         display: inline-block;
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007aff"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>');
         background-repeat: no-repeat;
         opacity: 0.8;
+        flex-shrink: 0;
       }
     }
 
     &-email {
-      font-size: 0.875rem;
+      font-size: clamp(0.75rem, 2.5vw, 0.875rem);
       color: var(--text-muted);
       margin: 0 0 0.5rem 0;
       white-space: nowrap;
@@ -251,23 +261,31 @@
     }
 
     &-address {
-      font-size: 0.75rem;
+      font-size: clamp(0.7rem, 2vw, 0.75rem);
       color: var(--text-muted);
       margin: 0 0 0.25rem 0;
       line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     &-relationship {
-      font-size: 0.75rem;
+      font-size: clamp(0.7rem, 2vw, 0.75rem);
       color: var(--text-muted);
       margin: 0;
       text-transform: capitalize;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &-actions {
       display: flex;
       gap: 0.5rem;
       flex-shrink: 0;
+      align-items: flex-start;
     }
 
     &-action {
@@ -282,6 +300,7 @@
       color: var(--text-muted);
       cursor: pointer;
       transition: all 0.2s ease;
+      touch-action: manipulation;
 
       &:hover {
         background-color: var(--primary);
@@ -289,10 +308,151 @@
         transform: scale(1.1);
       }
 
+      &:active {
+        transform: scale(0.95);
+      }
+
       &-edit {
         &:hover {
           background-color: var(--primary);
           color: white;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .contact {
+    &-banner {
+      padding: 0.75rem;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+
+      &-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      &-content {
+        flex: 1;
+      }
+
+      &-name {
+        font-size: 1rem;
+        margin-bottom: 0.125rem;
+      }
+
+      &-username {
+        font-size: 0.8rem;
+        margin-bottom: 0.125rem;
+      }
+
+      &-phoneNumber {
+        font-size: 0.8rem;
+        margin-bottom: 0.125rem;
+
+        &::before {
+          width: 12px;
+          height: 12px;
+        }
+      }
+
+      &-email {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+      }
+
+      &-address {
+        font-size: 0.7rem;
+        margin-bottom: 0.125rem;
+      }
+
+      &-relationship {
+        font-size: 0.7rem;
+      }
+
+      &-actions {
+        gap: 0.25rem;
+      }
+
+      &-action {
+        width: 36px;
+        height: 36px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .contact {
+    &-banner {
+      padding: 0.5rem;
+      gap: 0.5rem;
+      flex-direction: row;
+      align-items: flex-start;
+
+      &-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+
+      &-name {
+        font-size: 0.9rem;
+      }
+
+      &-username,
+      &-phoneNumber,
+      &-email {
+        font-size: 0.75rem;
+      }
+
+      &-address,
+      &-relationship {
+        font-size: 0.65rem;
+      }
+
+      &-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      &-action {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .contact {
+    &-banner {
+      &-address {
+        -webkit-line-clamp: 1;
+      }
+    }
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .contact {
+    &-banner {
+      &:hover {
+        transform: none;
+      }
+
+      &-action {
+        &:hover {
+          transform: none;
+        }
+
+        &:active {
+          background-color: var(--primary);
+          color: white;
+          transform: scale(0.95);
         }
       }
     }

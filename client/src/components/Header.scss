@@ -13,20 +13,94 @@ header {
       max-width: 1200px;
       margin: 0 auto;
       text-align: center;
-      padding: 2rem;
+      padding: 1.5rem 1rem;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     &-name {
       &-kop {
         color: var(--primary);
         font-weight: 900;
-        font-size: 3rem;
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1.2;
       }
 
       &-small {
-        color: var(--primary-light)
+        color: var(--primary-light);
+        font-size: clamp(0.9rem, 2.5vw, 1rem);
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    margin-bottom: 1rem;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+
+    .header {
+      &-wrapper {
+        width: 95%;
+        padding: 1rem 0.5rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      &-name {
+        &-kop {
+          font-size: 2rem;
+        }
+
+        &-small {
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    .header {
+      &-wrapper {
+        width: 100%;
+        padding: 0.75rem 0.25rem;
+      }
+
+      &-name {
+        &-kop {
+          font-size: 1.75rem;
+        }
+
+        &-small {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  header {
+    .header {
+      &-wrapper {
+        width: 85%;
+        padding: 1.75rem 1rem;
+      }
+
+      &-name {
+        &-kop {
+          font-size: 2.5rem;
+        }
       }
     }
   }
