@@ -5,6 +5,7 @@ export interface Contact {
     id: number;
     name: string;
     username: string | null;
+    phone_number: number;
     email: string | null;
     address: Address | null;
     relationship?: Relationship;

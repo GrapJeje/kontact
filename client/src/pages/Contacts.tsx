@@ -8,9 +8,11 @@ import "./Contacts.scss";
 function Contacts() {
     const { user, logout } = useAuth();
     const [contacts, setContacts] = useState<Contact[]>([]);
+    const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searching, setSearching] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,6 +33,7 @@ function Contacts() {
 
                 const data = await res.json();
                 setContacts(data);
+                setFilteredContacts(data);
             } catch (error) {
                 console.error("Fout bij het verkrijgen van alle contacten: ", error);
                 setError("Failed to load contacts");
@@ -42,8 +45,26 @@ function Contacts() {
         fetchContacts();
     }, [user?.id]);
 
+    useEffect(() => {
+        if (searchTerm.trim() === "") {
+            setFilteredContacts(contacts);
+        } else {
+            const filtered = contacts.filter(contact =>
+                contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredContacts(filtered);
+        }
+    }, [searchTerm, contacts]);
+
     const toggleSearching = () => {
         setSearching(prev => !prev);
+        if (!searching) {
+            setSearchTerm("");
+        }
+    };
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
     };
 
     const handleLogout = async () => {
@@ -69,6 +90,8 @@ function Contacts() {
                                 <input
                                     type="text"
                                     placeholder="Zoek contacten..."
+                                    value={searchTerm}
+                                    onChange={handleSearchChange}
                                     style={{display: searching ? 'block' : 'none'}}
                                 />
                                 <button onClick={toggleSearching} title={"Zoek contacten"}>
@@ -100,12 +123,12 @@ function Contacts() {
                         {error && <p className="error">{error}</p>}
 
                         <div className="contacts-content">
-                            {contacts.length > 0 ? (
-                                contacts.map(contact => (
+                            {filteredContacts.length > 0 ? (
+                                filteredContacts.map(contact => (
                                     <ContactBanner key={contact.id} {...contact} />
                                 ))
                             ) : (
-                                !loading && <p>No contacts found</p>
+                                !loading && <p>{searchTerm ? "Geen contacten gevonden" : "No contacts found"}</p>
                             )}
                         </div>
                     </div>
