@@ -6,7 +6,7 @@ import type {Contact} from "../models/Contact.ts";
 import "./Contacts.scss";
 
 function Contacts() {
-    const {user} = useAuth();
+    const { user, logout } = useAuth();
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -46,6 +46,15 @@ function Contacts() {
         setSearching(prev => !prev);
     };
 
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate(`/login`);
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
     return (
         <div className="contacts-wrapper">
             <div className="contacts-scroll-wrapper">
@@ -75,6 +84,13 @@ function Contacts() {
                                         <img src="/contacts/plus-icon.svg" alt="Add" width="24" height="24"/>
                                     </button>
                                 )}
+                                <button
+                                    onClick={handleLogout}
+                                    className="logout-btn"
+                                    title="Uitloggen"
+                                >
+                                    <img src="/contacts/logout-icon.svg" alt="Logout" width="24" height="24"/>
+                                </button>
                             </div>
                         </div>
                     </div>

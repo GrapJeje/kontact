@@ -124,11 +124,20 @@ app.get("/api/validate-token", async (req: Request, res: Response) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
 
         const [sessions]: any = await pool.query(
-            "SELECT * FROM sessions WHERE token = ? AND expires_at > NOW()",
-            [token]
+            `SELECT * FROM sessions 
+             WHERE token = ? 
+             AND expires_at > NOW() 
+             AND user_id = ?`,
+            [token, decoded.userId]
         );
 
-        if (sessions.length === 0) return res.status(401).json({ valid: false });
+        if (sessions.length === 0) {
+            await pool.query(
+                "DELETE FROM sessions WHERE token = ?",
+                [token]
+            );
+            return res.status(401).json({ valid: false });
+        }
 
         return res.json({
             valid: true,
@@ -139,6 +148,10 @@ app.get("/api/validate-token", async (req: Request, res: Response) => {
         });
 
     } catch (error) {
+        await pool.query(
+            "DELETE FROM sessions WHERE token = ?",
+            [token]
+        );
         return res.status(401).json({ valid: false });
     }
 });
@@ -179,6 +192,54 @@ app.post("/api/contacts/all", async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: "Server error",
+            error: error.message
+        });
+    }
+});
+
+app.post("/api/logout", async (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(400).json({
+            success: false,
+            message: "Authorization header required"
+        });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    try {
+        let userId: string | null = null;
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+            userId = decoded.userId;
+        } catch (e) {
+            console.log('Token verification failed during logout, proceeding with cleanup anyway');
+        }
+
+        if (userId) {
+            await pool.query(
+                "DELETE FROM sessions WHERE user_id = ? OR token = ?",
+                [userId, token]
+            );
+        } else {
+            await pool.query(
+                "DELETE FROM sessions WHERE token = ?",
+                [token]
+            );
+        }
+
+        res.json({
+            success: true,
+            message: "Successfully logged out"
+        });
+
+    } catch (error) {
+        console.error('Logout error:', error);
+        res.status(500).json({
+            success: false,
+            message: "Logout failed",
             error: error.message
         });
     }
