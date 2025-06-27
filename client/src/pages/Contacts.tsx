@@ -13,6 +13,7 @@ function Contacts() {
     const [error, setError] = useState<string | null>(null);
     const [searching, setSearching] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [animating, setAnimating] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -57,9 +58,18 @@ function Contacts() {
     }, [searchTerm, contacts]);
 
     const toggleSearching = () => {
-        setSearching(prev => !prev);
+        if (animating) return;
+
+        setAnimating(true);
         if (!searching) {
-            setSearchTerm("");
+            setSearching(true);
+            setTimeout(() => setAnimating(false), 300);
+        } else {
+            setSearching(false);
+            setTimeout(() => {
+                setSearchTerm("");
+                setAnimating(false);
+            }, 250);
         }
     };
 
@@ -86,7 +96,7 @@ function Contacts() {
                                 <h1 className={"contacts-header-name-kop"}>Kontacts</h1>
                                 <p className={"contacts-header-name-small"}>Beheer al jouw contacten op één plek!</p>
                             </div>
-                            <div className={`contacts-header-btn ${searching ? 'searching' : ''}`}>
+                            <div className={`contacts-header-btn ${searching ? 'searching searching-active' : ''} ${animating ? (searching ? 'searching-active' : 'searching-inactive') : ''}`}>
                                 <input
                                     type="text"
                                     placeholder="Zoek contacten..."
