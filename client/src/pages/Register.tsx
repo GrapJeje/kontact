@@ -61,6 +61,10 @@ function Register() {
                         <button onClick={() => navigate('/login')} className="login-btn" title="Login">
                             <p>Al een account? Log dan nu in!</p>
                         </button>
+                        <button onClick={() => window.open('https://github.com/GrapJeje/kontact', '_blank')}
+                                className="login-btn" title="Zie Source">
+                            <img src="/person.svg" alt="Person"/>
+                        </button>
                     </>
                 )}>
             </Header>
@@ -68,7 +72,7 @@ function Register() {
             <h1>Register</h1>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Username:<br />
+                <label>Username:<br />
                         <input
                             type="text"
                             name="username"
