@@ -1,34 +1,109 @@
 .contacts {
-  width: 70%;
-  max-width: 1200px;
-  margin: 0 auto;
   min-height: 100vh;
+  background-color: var(--gray-200);
 
   &-header {
     position: sticky;
     top: 0;
     z-index: 10;
-    text-align: center;
-    padding: 2rem;
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--gray-200);
+    background-color: white;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     margin-bottom: 2rem;
 
+    &-wrapper {
+      width: 70%;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
     &-name {
       &-kop {
         color: var(--primary);
+        font-weight: 900;
+        font-size: 3rem;
       }
 
       &-small {
         color: var(--primary-light)
       }
     }
+
+    .contacts-header {
+      &-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+
+        input {
+          width: 0;
+          opacity: 0;
+          transition: all 0.3s ease;
+          padding: 0;
+          border: none;
+          background: transparent;
+          color: white;
+          font-size: 16px;
+          outline: none;
+          border-bottom: 1px solid transparent;
+
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+          }
+        }
+
+        &.searching {
+          input {
+            width: 200px;
+            opacity: 1;
+            padding: .3rem;
+            border: 1px solid var(--primary-light);
+            border-radius: 15px;
+            color: var(--gray-500);
+            font-weight: 600;
+
+            &:focus {
+              padding: 1rem;
+              width: 200%;
+              border-radius: 30px;
+            }
+
+            &::placeholder {
+              color: var(--gray-400);
+              opacity: 1;
+              font-weight: normal;
+            }
+          }
+        }
+
+        button {
+          background: none;
+          border: none;
+          padding: 5px;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+          }
+
+          img {
+            display: block;
+          }
+        }
+      }
+    }
   }
 
   &-body {
+    width: 70%;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 0 2rem 2rem 2rem;
   }
 }
@@ -138,9 +213,10 @@
         transform: scale(1.1);
       }
 
-      &--edit {
+      &-edit {
         &:hover {
           background-color: var(--primary);
+          color: white;
         }
       }
     }

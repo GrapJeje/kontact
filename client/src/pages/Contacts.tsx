@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import ContactBanner from "../components/ContactBanner.tsx";
 import type {Contact} from "../models/Contact.ts";
@@ -9,7 +10,8 @@ function Contacts() {
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const searching = false;
+    const [searching, setSearching] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         document.title = "Kontacts";
@@ -40,27 +42,40 @@ function Contacts() {
         fetchContacts();
     }, [user?.id]);
 
+    const toggleSearching = () => {
+        setSearching(prev => !prev);
+    };
+
     return (
         <div className="contacts-wrapper">
             <div className="contacts-scroll-wrapper">
                 <div className="contacts">
                     <div className="contacts-header">
-                        <div className={"contacts-header-name"}>
-                            <h1 className={"contacts-header-name-kop"}>Kontacts</h1>
-                            <p className={"contacts-header-name-small"}>Beheer al jouw contacten op één plek!</p>
-                        </div>
-                        <div className={"contacts-header-btn"}>
-                            {searching && (
-                                <input type="text"/>
-                            )}
-                            <button>
-                                <img src="/contacts/magnifying-glass.svg" alt="Add" width="24" height="24"/>
-                            </button>
-                            {!searching && (
-                                <button>
-                                    <img src="/contacts/plus-icon.svg" alt="Add" width="24" height="24" />
+                        <div className={"contacts-header-wrapper"}>
+                            <div className={"contacts-header-name"}>
+                                <h1 className={"contacts-header-name-kop"}>Kontacts</h1>
+                                <p className={"contacts-header-name-small"}>Beheer al jouw contacten op één plek!</p>
+                            </div>
+                            <div className={`contacts-header-btn ${searching ? 'searching' : ''}`}>
+                                <input
+                                    type="text"
+                                    placeholder="Zoek contacten..."
+                                    style={{display: searching ? 'block' : 'none'}}
+                                />
+                                <button onClick={toggleSearching} title={"Zoek contacten"}>
+                                    <img
+                                        src={"/contacts/magnifying-glass.svg"}
+                                        alt={"Search"}
+                                        width="24"
+                                        height="24"
+                                    />
                                 </button>
-                            )}
+                                {!searching && (
+                                    <button onClick={() => navigate('/new')} title={"Nieuw contact"}>
+                                        <img src="/contacts/plus-icon.svg" alt="Add" width="24" height="24"/>
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
 

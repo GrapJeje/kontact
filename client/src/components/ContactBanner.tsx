@@ -1,14 +1,18 @@
 import type { Contact } from "../models/Contact.ts";
+import { useNavigate } from "react-router-dom";
 
 type ContactBannerProps = Contact
 
 function ContactBanner({
+                          id,
                            name,
                            username,
                            email,
                            address,
                            relationship
                        }: ContactBannerProps) {
+    const navigate = useNavigate();
+
     return (
         <div className="contact-banner">
             <div className="contact-banner-avatar">
@@ -30,7 +34,7 @@ function ContactBanner({
             </div>
 
             <div className="contact-banner-actions">
-                <button className="contact-banner-action contact-banner-action--edit" title="Edit">
+                <button onClick={() => navigate(`/user/${id}`)}  className="contact-banner-action contact-banner-action-edit" title="Edit contact">
                     <img src="/contacts/edit.svg" alt="Add" width="24" height="24"/>
                 </button>
             </div>

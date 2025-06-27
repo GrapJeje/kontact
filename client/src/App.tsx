@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import User from "./pages/User";
 import ProtectedRoute from "./components/ProtectedRoute";
+import New from "./pages/New.tsx";
 
 function App() {
     return (
@@ -18,7 +19,14 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-                {/*<Route path="/" element={<Contacts />} />*/}
+                <Route
+                    path="/new"
+                    element={
+                        <ProtectedRoute>
+                            <New />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route
