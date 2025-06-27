@@ -1,0 +1,33 @@
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  margin-bottom: 2rem;
+
+  .header {
+    &-wrapper {
+      width: 70%;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &-name {
+      &-kop {
+        color: var(--primary);
+        font-weight: 900;
+        font-size: 3rem;
+      }
+
+      &-small {
+        color: var(--primary-light)
+      }
+    }
+  }
+}

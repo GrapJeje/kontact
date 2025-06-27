@@ -1,23 +1,22 @@
-import {useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import ContactBanner from "../components/ContactBanner.tsx";
 import type {Contact} from "../models/Contact.ts";
 import "./Contacts.scss";
+import Header from "../components/Header.tsx";
 
 function Contacts() {
-    const { user, logout } = useAuth();
+    const {user} = useAuth();
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searching, setSearching] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [animating, setAnimating] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        document.title = "Kontacts";
+        document.title = "Kontact - Beheer al jouw contacten op één plek!";
 
         const fetchContacts = async () => {
             if (!user?.id) return;
@@ -57,46 +56,17 @@ function Contacts() {
         }
     }, [searchTerm, contacts]);
 
-    const toggleSearching = () => {
-        if (animating) return;
-
-        setAnimating(true);
-        if (!searching) {
-            setSearching(true);
-            setTimeout(() => setAnimating(false), 300);
-        } else {
-            setSearching(false);
-            setTimeout(() => {
-                setSearchTerm("");
-                setAnimating(false);
-            }, 250);
-        }
-    };
-
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
-    };
-
-    const handleLogout = async () => {
-        try {
-            await logout();
-            navigate(`/login`);
-        } catch (error) {
-            console.error('Logout failed:', error);
-        }
     };
 
     return (
         <div className="contacts-wrapper">
             <div className="contacts-scroll-wrapper">
                 <div className="contacts">
-                    <div className="contacts-header">
-                        <div className={"contacts-header-wrapper"}>
-                            <div className={"contacts-header-name"}>
-                                <h1 className={"contacts-header-name-kop"}>Kontacts</h1>
-                                <p className={"contacts-header-name-small"}>Beheer al jouw contacten op één plek!</p>
-                            </div>
-                            <div className={`contacts-header-btn ${searching ? 'searching searching-active' : ''} ${animating ? (searching ? 'searching-active' : 'searching-inactive') : ''}`}>
+                    <Header
+                        renderButtons={({searching, toggleSearching, handleLogout}) => (
+                            <>
                                 <input
                                     type="text"
                                     placeholder="Zoek contacten..."
@@ -104,29 +74,20 @@ function Contacts() {
                                     onChange={handleSearchChange}
                                     style={{display: searching ? 'block' : 'none'}}
                                 />
-                                <button onClick={toggleSearching} title={"Zoek contacten"}>
-                                    <img
-                                        src={"/contacts/magnifying-glass.svg"}
-                                        alt={"Search"}
-                                        width="24"
-                                        height="24"
-                                    />
+                                <button onClick={toggleSearching} title="Zoek contacten">
+                                    <img src="/contacts/magnifying-glass.svg" alt="Search" width="24" height="24"/>
                                 </button>
                                 {!searching && (
-                                    <button onClick={() => navigate('/new')} title={"Nieuw contact"}>
+                                    <button onClick={() => navigate('/new')} title="Nieuw contact">
                                         <img src="/contacts/plus-icon.svg" alt="Add" width="24" height="24"/>
                                     </button>
                                 )}
-                                <button
-                                    onClick={handleLogout}
-                                    className="logout-btn"
-                                    title="Uitloggen"
-                                >
+                                <button onClick={handleLogout} className="logout-btn" title="Uitloggen">
                                     <img src="/contacts/logout-icon.svg" alt="Logout" width="24" height="24"/>
                                 </button>
-                            </div>
-                        </div>
-                    </div>
+                            </>
+                        )}>
+                    </Header>
 
                     <div className="contacts-body">
                         {loading && <p>Loading contacts...</p>}

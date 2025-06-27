@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header.tsx";
 
 function Register() {
-    useEffect(() => {
-        document.title = "Kontacts - Register";
-    }, []);
-
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = "Kontact - Register";
+    }, []);
 
     const [form, setForm] = useState({
         username: "",
@@ -54,6 +55,16 @@ function Register() {
 
     return (
         <div>
+            <Header
+                renderButtons={() => (
+                    <>
+                        <button onClick={() => navigate('/login')} className="login-btn" title="Login">
+                            <p>Al een account? Log dan nu in!</p>
+                        </button>
+                    </>
+                )}>
+            </Header>
+
             <h1>Register</h1>
             <form onSubmit={handleSubmit}>
                 <div>

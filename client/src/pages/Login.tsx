@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header.tsx";
 
 function Login() {
-    useEffect(() => {
-        document.title = "Kontacts - Login";
-    }, []);
-
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = "Kontact - Login";
+    }, []);
 
     const [form, setForm] = useState({
         username: "",
@@ -60,6 +61,16 @@ function Login() {
 
     return (
         <div>
+            <Header
+                renderButtons={() => (
+                    <>
+                        <button onClick={() => navigate('/register')} className="register-btn" title="Aanmelden">
+                            <p>Geen account? Meld je dan nu aan!</p>
+                        </button>
+                    </>
+                )}>
+            </Header>
+
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
                 <div>
