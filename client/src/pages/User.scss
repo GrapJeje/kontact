@@ -1,0 +1,250 @@
+.user {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  &-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 500;
+    font-size: 48px;
+    flex-shrink: 0;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &-section {
+    background-color: var(--surface);
+    border: none;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    min-height: 120px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    h1 {
+      font-weight: 600;
+      font-size: 28px;
+      color: var(--text);
+      margin: 0;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 16px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &::before {
+        content: '';
+        width: 4px;
+        height: 4px;
+        background-color: var(--primary);
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+    }
+
+    &-sub {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+
+      @media (min-width: 480px) {
+        flex-direction: row;
+        justify-content: center;
+        gap: 32px;
+      }
+    }
+  }
+
+  /* Additional contact info styling */
+  h1 {
+    font-weight: 600;
+    font-size: 24px;
+    color: var(--text);
+    margin: 24px 0 16px 0;
+    text-align: center;
+  }
+
+  p {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin: 8px 0;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .address {
+    background-color: var(--surface);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 400px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &::before {
+        content: '📍';
+        font-size: 16px;
+      }
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 4px 0;
+      text-align: left;
+      line-height: 1.4;
+    }
+  }
+}
+
+/* Material Design Ripple Effect */
+.user-section {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .user {
+    padding: 16px 12px;
+    width: 95%;
+
+    &-avatar {
+      width: 100px;
+      height: 100px;
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+
+    &-section {
+      padding: 20px 16px;
+      gap: 12px;
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h3 {
+        font-size: 14px;
+      }
+
+      &-sub {
+        gap: 8px;
+      }
+    }
+
+    .address {
+      padding: 12px;
+      margin: 12px 0;
+
+      h3 {
+        font-size: 16px;
+      }
+
+      p {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .user {
+    &-avatar {
+      width: 80px;
+      height: 80px;
+      font-size: 32px;
+    }
+
+    &-section {
+      padding: 16px 12px;
+
+      h1 {
+        font-size: 20px;
+      }
+
+      h3 {
+        font-size: 13px;
+      }
+    }
+  }
+}

@@ -197,6 +197,48 @@ app.post("/api/contacts/all", async (req: Request, res: Response) => {
     }
 });
 
+app.post("/api/contacts/get", async (req: Request, res: Response) => {
+    const { user_id } = req.body;
+    const { contact_id } = req.body;
+    const limit = parseInt(req.query.limit as string) || 1;
+
+    if (!user_id) return res.status(400).json({ success: false, message: "User ID is required" });
+    if (!contact_id) return res.status(400).json({ success: false, message: "Contact ID is required" });
+
+    try {
+        const [contacts]: any = await pool.query(
+            `SELECT * FROM contacts WHERE user_id = ? AND id = ? ORDER BY id DESC LIMIT ?`,
+            [user_id, contact_id, limit]
+        );
+
+        if (contacts.length === 0) return res.json([]);
+
+        const contactIds = contacts.map((c: any) => c.id);
+
+        const [addresses]: any = await pool.query(
+            `SELECT * FROM addresses WHERE contact_id IN (?)`,
+            [contactIds]
+        );
+
+        const contactsWithAddresses = contacts.map((contact: any) => {
+            const contactAddress = addresses.find((addr: any) => addr.contact_id === contact.id);
+            return {
+                ...contact,
+                address: contactAddress || null
+            };
+        });
+
+        res.json(contactsWithAddresses);
+    } catch (error: any) {
+        console.error("Fout bij ophalen van contact:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message
+        });
+    }
+});
+
 app.post("/api/contacts/verifyperson", async (req: Request, res: Response) => {
     const { contact_id, user_id } = req.body;
 
