@@ -7,6 +7,7 @@
   max-width: 480px;
   margin: 0 auto;
   padding: 24px 16px;
+  gap: 16px;
 
   &-avatar {
     width: 120px;
@@ -63,34 +64,6 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
-    h1 {
-      font-weight: 600;
-      font-size: 28px;
-      color: var(--text);
-      margin: 0;
-      text-align: center;
-      line-height: 1.2;
-    }
-
-    h3 {
-      color: var(--text-muted);
-      font-weight: 400;
-      font-size: 16px;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      &::before {
-        content: '';
-        width: 4px;
-        height: 4px;
-        background-color: var(--primary);
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-    }
-
     &-sub {
       display: flex;
       flex-direction: column;
@@ -106,21 +79,33 @@
     }
   }
 
-  /* Additional contact info styling */
-  h1 {
-    font-weight: 600;
-    font-size: 24px;
+  .user-input {
+    background: transparent;
+    border: none;
+    padding: 8px 4px;
+    font-size: inherit;
     color: var(--text);
-    margin: 24px 0 16px 0;
+    width: 100%;
+    transition: all 0.3s ease;
     text-align: center;
+
+    &:focus {
+      outline: none;
+      border-bottom-color: var(--primary);
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    &::placeholder {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
   }
 
-  p {
-    font-size: 16px;
-    color: var(--text-muted);
-    margin: 8px 0;
+  .name-input {
+    font-size: 28px;
+    font-weight: 600;
+    border-bottom-width: 3px;
     text-align: center;
-    line-height: 1.5;
   }
 
   .address {
@@ -147,17 +132,45 @@
       }
     }
 
-    p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin: 4px 0;
+    .user-input {
       text-align: left;
-      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+  }
+
+  .address-row {
+    display: flex;
+    gap: 8px;
+
+    .user-input {
+      flex: 1;
+    }
+  }
+
+  .save-button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 }
 
-/* Material Design Ripple Effect */
 .user-section {
   position: relative;
   overflow: hidden;
@@ -179,72 +192,5 @@
   &:active::after {
     width: 300px;
     height: 300px;
-  }
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .user {
-    padding: 16px 12px;
-    width: 95%;
-
-    &-avatar {
-      width: 100px;
-      height: 100px;
-      font-size: 40px;
-      margin-bottom: 20px;
-    }
-
-    &-section {
-      padding: 20px 16px;
-      gap: 12px;
-
-      h1 {
-        font-size: 24px;
-      }
-
-      h3 {
-        font-size: 14px;
-      }
-
-      &-sub {
-        gap: 8px;
-      }
-    }
-
-    .address {
-      padding: 12px;
-      margin: 12px 0;
-
-      h3 {
-        font-size: 16px;
-      }
-
-      p {
-        font-size: 13px;
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .user {
-    &-avatar {
-      width: 80px;
-      height: 80px;
-      font-size: 32px;
-    }
-
-    &-section {
-      padding: 16px 12px;
-
-      h1 {
-        font-size: 20px;
-      }
-
-      h3 {
-        font-size: 13px;
-      }
-    }
   }
 }
