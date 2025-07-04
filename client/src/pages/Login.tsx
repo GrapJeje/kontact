@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header.tsx";
+import './Auth.scss';
 
 function Login() {
     const navigate = useNavigate();
@@ -60,52 +61,74 @@ function Login() {
     };
 
     return (
-        <div>
+        <div className="login-page">
             <Header
                 renderButtons={() => (
                     <>
                         <button onClick={() => navigate('/register')} className="register-btn" title="Aanmelden">
-                            <p>Geen account? Meld je dan nu aan!</p>
+                            <p>Geen account? <span>Meld je aan!</span></p>
                         </button>
                         <button onClick={() => window.open('https://github.com/GrapJeje/kontact', '_blank')}
-                                className="login-btn" title="Zie Source">
-                            <img src="/person.svg" alt="Person"/>
+                                className="github-btn" title="Zie Source">
+                            <img src="/person.svg" alt="GitHub"/>
                         </button>
                     </>
                 )}>
             </Header>
 
-            <h1>Login</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username:<br/>
-                        <input
-                            type="text"
-                            name="username"
-                            value={form.username}
-                            onChange={handleChange}
-                            required
-                            autoComplete="username"
-                        />
-                    </label>
-                </div>
+            <main className="login-container">
+                <div className="login-card">
+                    <div className="card-header">
+                        <h1 className="login-title">Welkom terug!</h1>
+                        <div className="decoration-circle"></div>
+                    </div>
 
-                <div>
-                    <label>Password:<br />
-                        <input
-                            type="password"
-                            name="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
-                        />
-                    </label>
-                </div>
+                    <form onSubmit={handleSubmit} className="login-form">
+                        <div className="form-group floating">
+                            <input
+                                type="text"
+                                name="username"
+                                id="username"
+                                value={form.username}
+                                onChange={handleChange}
+                                required
+                                autoComplete="username"
+                                className="form-input"
+                                placeholder=" "
+                            />
+                            <label htmlFor="username" className="form-label">Gebruikersnaam</label>
+                            <div className="underline"></div>
+                        </div>
 
-                <button type="submit">Login</button>
-            </form>
-            {message && <p>{message}</p>}
+                        <div className="form-group floating">
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                value={form.password}
+                                onChange={handleChange}
+                                required
+                                autoComplete="new-password"
+                                className="form-input"
+                                placeholder=" "
+                            />
+                            <label htmlFor="password" className="form-label">Wachtwoord</label>
+                            <div className="underline"></div>
+                        </div>
+
+                        <button type="submit" className="submit-btn">
+                            <span>Inloggen</span>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"
+                                      strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
+
+                    {message &&
+                        <p className={`message ${message.includes('error') ? 'error' : 'success'}`}>{message}</p>}
+                </div>
+            </main>
         </div>
     );
 }
