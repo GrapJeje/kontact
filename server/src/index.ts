@@ -333,6 +333,64 @@ app.post("/api/logout", async (req: Request, res: Response) => {
     }
 });
 
+app.post("/api/contacts/update", async (req: Request, res: Response) => {
+    const { user_id, contact_id, updates } = req.body;
+
+    if (!user_id || !contact_id || !updates)
+        return res.status(400).json({ message: "user_id, contact_id en updates zijn verplicht" });
+
+    const {
+        name = null,
+        username = null,
+        email = null,
+        phone_number = null,
+        relationship = null,
+        address = null
+    } = updates;
+
+    try {
+        await pool.query(
+            `UPDATE contacts SET name = ?, username = ?, email = ?, phone_number = ?, relationship = ? WHERE id = ? AND user_id = ?`,
+            [name, username, email, phone_number, relationship, contact_id, user_id]
+        );
+
+        if (address) {
+            const {
+                street = null,
+                city = null,
+                province = null,
+                postal_code = null,
+                country = null
+            } = address;
+
+            const [existingAddress] = await pool.query(
+                `SELECT id FROM addresses WHERE contact_id = ?`,
+                [contact_id]
+            );
+
+            if ((existingAddress as any[]).length > 0) {
+                await pool.query(
+                    `UPDATE addresses SET street = ?, city = ?, province = ?, postal_code = ?, country = ? WHERE contact_id = ?`,
+                    [street, city, province, postal_code, country, contact_id]
+                );
+            } else {
+                await pool.query(
+                    `INSERT INTO addresses (contact_id, street, city, province, postal_code, country) VALUES (?, ?, ?, ?, ?, ?)`,
+                    [contact_id, street, city, province, postal_code, country]
+                );
+            }
+        }
+
+        res.json({
+            success: true,
+            message: "Succesvol geupdate"
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Er is iets misgegaan bij het updaten" });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server draait op http://localhost:${port}`);
 });
