@@ -157,9 +157,7 @@ app.get("/api/validate-token", async (req: Request, res: Response) => {
 });
 
 app.post("/api/contacts/all", async (req: Request, res: Response) => {
-    const { id } = req.body;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const offset = parseInt(req.query.offset as string) || 0;
+    const { id, limit, offset } = req.body;
 
     if (!id) return res.status(400).json({ success: false, message: "User ID is required" });
 

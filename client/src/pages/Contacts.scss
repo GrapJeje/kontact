@@ -322,6 +322,107 @@
   }
 }
 
+.contacts-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+
+  button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+    min-width: 120px;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.3s ease;
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+
+    &:first-child {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+
+      &:hover {
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+      }
+    }
+
+    &:last-child {
+      background: var(--gray-100);
+      color: var(--text-muted);
+      border-color: var(--gray-300);
+
+      &:hover {
+        background: var(--gray-200);
+        color: var(--text);
+        border-color: var(--gray-400);
+      }
+    }
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .contacts-actions {
+    button {
+      padding: 1rem 1.5rem;
+
+      &:hover {
+        transform: none;
+      }
+
+      &:active {
+        background-color: var(--primary-dark);
+        transform: scale(0.98);
+      }
+
+      &:last-child:active {
+        background-color: var(--gray-300);
+      }
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .contact {
     &-banner {
@@ -383,6 +484,19 @@
       }
     }
   }
+
+  .contacts-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+
+    button {
+      width: 100%;
+      max-width: 280px;
+      padding: 0.875rem 1.5rem;
+      font-size: 0.9rem;
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -423,6 +537,17 @@
         width: 32px;
         height: 32px;
       }
+    }
+  }
+
+  .contacts-actions {
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+
+    button {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.85rem;
+      min-width: 100px;
     }
   }
 }
