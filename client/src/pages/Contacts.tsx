@@ -16,7 +16,7 @@ function Contacts() {
     const navigate = useNavigate();
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
-    const [hasMore, setHasMore] = useState(true); // Nieuw state voor tracking of er meer contacten zijn
+    const [hasMore, setHasMore] = useState(true);
 
     const fetchContacts = async (newLimit = limit, newOffset = offset) => {
         if (!user?.id) return;
@@ -40,7 +40,6 @@ function Contacts() {
 
             const data = await res.json();
 
-            // Controleer of er minder contacten zijn teruggekomen dan gevraagd
             setHasMore(data.length === newLimit);
 
             if (newOffset > 0) setContacts(prev => [...prev, ...data]);
@@ -66,7 +65,7 @@ function Contacts() {
     }, [limit, user?.id]);
 
     const handleMore = () => {
-        const newLimit = 5; // Altijd 5 nieuwe items laden
+        const newLimit = 5;
         const newOffset = contacts.length;
         fetchContacts(newLimit, newOffset).then(() => {
             setLimit(prev => prev + newLimit);
@@ -79,7 +78,7 @@ function Contacts() {
         setLimit(newLimit);
         setContacts(prev => prev.slice(0, newLimit));
         setFilteredContacts(prev => prev.slice(0, newLimit));
-        setHasMore(true); // Reset hasMore bij het verminderen van het aantal
+        setHasMore(true);
     };
 
     useEffect(() => {
@@ -94,6 +93,44 @@ function Contacts() {
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
+    };
+
+    const renderEmptyState = () => {
+        if (searchTerm) {
+            return (
+                <div className="contacts-empty-state">
+                    <div className="contacts-empty-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                            <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2"/>
+                            <path d="M11 8v6M8 11h6" stroke="currentColor" strokeWidth="2" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <h3>Geen contacten gevonden</h3>
+                    <p>Er zijn geen contacten die voldoen aan '{searchTerm}'</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="contacts-empty-state">
+                <div className="contacts-empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 4H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z" stroke="currentColor" strokeWidth="2"/>
+                        <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                </div>
+                <h3>Nog geen contacten</h3>
+                <p>Voeg je eerste contact toe om te beginnen</p>
+                <button
+                    className="contacts-empty-button"
+                    onClick={() => navigate('/new')}
+                >
+                    Nieuw contact toevoegen
+                </button>
+            </div>
+        );
     };
 
     return (
@@ -135,20 +172,21 @@ function Contacts() {
                                     <ContactBanner key={contact.id} {...contact} />
                                 ))
                             ) : (
-                                !loading && <p>{searchTerm ? "Geen contacten gevonden" : "No contacts found"}</p>
+                                !loading && renderEmptyState()
                             )}
                         </div>
 
-                        <div className="contacts-actions">
-                            {hasMore && !searchTerm && (
-                                <button onClick={handleMore}>Load more (+5)</button>
-                            )}
+                        {filteredContacts.length > 0 && (
+                            <div className="contacts-actions">
+                                {hasMore && !searchTerm && (
+                                    <button onClick={handleMore}>Load more (+5)</button>
+                                )}
 
-                            {limit > 10 && (
-                                <button onClick={handleLess}>Load less (-5)</button>
-                            )}
-                        </div>
-
+                                {limit > 10 && (
+                                    <button onClick={handleLess}>Load less (-5)</button>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
