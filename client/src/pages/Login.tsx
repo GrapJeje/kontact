@@ -61,11 +61,11 @@ function Login() {
     };
 
     return (
-        <div className="login-page">
+        <div className="auth-page">
             <Header
                 renderButtons={() => (
                     <>
-                        <button onClick={() => navigate('/register')} className="register-btn" title="Aanmelden">
+                        <button onClick={() => navigate('/register')} className="action-btn" title="Aanmelden">
                             <p>Geen account? <span>Meld je aan!</span></p>
                         </button>
                         <button onClick={() => window.open('https://github.com/GrapJeje/kontact', '_blank')}
@@ -76,14 +76,14 @@ function Login() {
                 )}>
             </Header>
 
-            <main className="login-container">
-                <div className="login-card">
+            <main className="auth-container">
+                <div className="auth-card">
                     <div className="card-header">
-                        <h1 className="login-title">Welkom terug!</h1>
+                        <h1 className="auth-title">Welkom terug!</h1>
                         <div className="decoration-circle"></div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="login-form">
+                    <form onSubmit={handleSubmit} className="auth-form">
                         <div className="form-group floating">
                             <input
                                 type="text"

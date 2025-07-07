@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header.tsx";
+import './Auth.scss';
 
 function Register() {
     const navigate = useNavigate();
@@ -54,65 +55,90 @@ function Register() {
     };
 
     return (
-        <div>
+        <div className="auth-page">
             <Header
                 renderButtons={() => (
                     <>
-                        <button onClick={() => navigate('/login')} className="login-btn" title="Login">
-                            <p>Al een account? Log dan nu in!</p>
+                        <button onClick={() => navigate('/login')} className="action-btn" title="Login">
+                            <p>Al een account? <span>Log dan nu in!</span></p>
                         </button>
                         <button onClick={() => window.open('https://github.com/GrapJeje/kontact', '_blank')}
-                                className="login-btn" title="Zie Source">
-                            <img src="/person.svg" alt="Person"/>
+                                className="github-btn" title="Zie Source">
+                            <img src="/person.svg" alt="GitHub"/>
                         </button>
                     </>
                 )}>
             </Header>
 
-            <h1>Register</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                <label>Username:<br />
-                        <input
-                            type="text"
-                            name="username"
-                            value={form.username}
-                            onChange={handleChange}
-                            required
-                            autoComplete="username"
-                        />
-                    </label>
-                </div>
+            <main className="auth-container">
+                <div className="auth-card">
+                    <div className="card-header">
+                        <h1 className="auth-title">Account aanmaken</h1>
+                        <div className="decoration-circle"></div>
+                    </div>
 
-                <div>
-                    <label>Password:<br />
-                        <input
-                            type="password"
-                            name="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
-                        />
-                    </label>
-                </div>
+                    <form onSubmit={handleSubmit} className="auth-form">
+                        <div className="form-group floating">
+                            <input
+                                type="text"
+                                name="username"
+                                id="username"
+                                value={form.username}
+                                onChange={handleChange}
+                                required
+                                autoComplete="username"
+                                className="form-input"
+                                placeholder=" "
+                            />
+                            <label htmlFor="username" className="form-label">Gebruikersnaam</label>
+                            <div className="underline"></div>
+                        </div>
 
-                <div>
-                    <label>Confirm Password:<br />
-                        <input
-                            type="password"
-                            name="second_password"
-                            value={form.second_password}
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
-                        />
-                    </label>
-                </div>
+                        <div className="form-group floating">
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                value={form.password}
+                                onChange={handleChange}
+                                required
+                                autoComplete="new-password"
+                                className="form-input"
+                                placeholder=" "
+                            />
+                            <label htmlFor="password" className="form-label">Wachtwoord</label>
+                            <div className="underline"></div>
+                        </div>
 
-                <button type="submit">Register</button>
-            </form>
-            {message && <p>{message}</p>}
+                        <div className="form-group floating">
+                            <input
+                                type="password"
+                                name="second_password"
+                                id="second_password"
+                                value={form.second_password}
+                                onChange={handleChange}
+                                required
+                                autoComplete="new-password"
+                                className="form-input"
+                                placeholder=" "
+                            />
+                            <label htmlFor="second_password" className="form-label">Bevestig wachtwoord</label>
+                            <div className="underline"></div>
+                        </div>
+
+                        <button type="submit" className="submit-btn">
+                            <span>Registreren</span>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"
+                                      strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
+
+                    {message &&
+                        <p className={`message ${message.includes('error') || message.includes('fout') ? 'error' : 'success'}`}>{message}</p>}
+                </div>
+            </main>
         </div>
     );
 }
