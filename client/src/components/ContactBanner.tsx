@@ -22,9 +22,17 @@ function ContactBanner({
 
             <div className="contact-banner-content">
                 <h1 className="contact-banner-name">{name}</h1>
-                <h2 className="contact-banner-username">@{username}</h2>
-                <h3 className="contact-banner-phoneNumber">{phone_number}</h3>
-                <h3 className="contact-banner-email">{email}</h3>
+                {username && (
+                    <h2 className="contact-banner-username">@{username}</h2>
+                )}
+
+                {phone_number && (
+                    <h3 className="contact-banner-phoneNumber">{phone_number}</h3>
+                )}
+
+                {email && (
+                    <h3 className="contact-banner-email">{email}</h3>
+                )}
 
                 {address && (
                     <p className="contact-banner-address">
@@ -32,7 +40,9 @@ function ContactBanner({
                     </p>
                 )}
 
-                <p className="contact-banner-relationship">{relationship}</p>
+                {relationship && (
+                    <p className="contact-banner-relationship">{relationship}</p>
+                )}
             </div>
 
             <div className="contact-banner-actions">
