@@ -103,10 +103,30 @@ function User() {
 
             if (res.ok) {
                 setContact(editedContact);
-                // Optioneel: toon een success message
             } else {
                 console.error("Opslaan mislukt");
             }
+        } catch (error) {
+            console.error("Fout bij opslaan:", error);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!editedContact || !user?.id) return;
+
+        try {
+            const res = await fetch("http://localhost:3001/api/contacts/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contact_id: id,
+                    user_id: user.id
+                }),
+                credentials: "include"
+            });
+
+            if (!res.ok) throw new Error("Verwijderen mislukt");
+            navigate('/');
         } catch (error) {
             console.error("Fout bij opslaan:", error);
         }
@@ -199,6 +219,10 @@ function User() {
 
                 <button className="save-button" onClick={handleSave}>
                     Opslaan
+                </button>
+
+                <button className="save-button" onClick={handleDelete}>
+                    Verwijder
                 </button>
             </div>
         </div>
