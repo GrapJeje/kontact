@@ -72,6 +72,43 @@
       }
     }
   }
+
+  &-letter {
+    &-group {
+      margin-bottom: 1.5rem;
+    }
+
+    &-divider {
+      position: relative;
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+
+      &::before,
+      &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      span {
+        position: relative;
+        z-index: 1;
+        color: var(--primary);
+        font-size: 0.75rem;
+        background: var(--gray-200);
+        border-radius: 1rem;
+        padding: 0.25rem 0.75rem;
+        border: 1px solid var(--border);
+      }
+    }
+  }
 }
 
 @keyframes fadeInUp {
@@ -171,8 +208,6 @@
   }
 }
 
-// Animaties
-
 @keyframes searchExpand {
   0% {
     width: 0;
@@ -239,7 +274,6 @@
 }
 
 // Contact banner
-
 .contact {
   &-banner {
     background-color: var(--surface);
@@ -477,9 +511,13 @@
   }
 }
 
-// Mobile responsive styles for empty state
 @media (max-width: 768px) {
   .contacts {
+    &-body {
+      width: 85%;
+      padding: 0 1rem 1rem 1rem;
+    }
+
     &-empty-state {
       padding: 3rem 1rem;
       min-height: 300px;
@@ -507,55 +545,19 @@
         font-size: 0.85rem;
       }
     }
-  }
-}
 
-@media (max-width: 480px) {
-  .contacts {
-    &-empty-state {
-      padding: 2rem 1rem;
-      min-height: 250px;
+    &-letter {
+      &-divider {
+        margin: 1rem 0;
 
-      .contacts-empty-icon {
-        svg {
-          width: 40px;
-          height: 40px;
+        span {
+          font-size: 0.7rem;
+          padding: 0.2rem 0.6rem;
         }
       }
-
-      h3 {
-        font-size: 1.125rem;
-      }
-
-      p {
-        font-size: 0.85rem;
-      }
     }
   }
-}
 
-@media (hover: none) and (pointer: coarse) {
-  .contacts-actions {
-    button {
-      padding: 1rem 1.5rem;
-
-      &:hover {
-        transform: none;
-      }
-
-      &:active {
-        background-color: var(--primary-dark);
-        transform: scale(0.98);
-      }
-
-      &:last-child:active {
-        background-color: var(--gray-300);
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
   .contact {
     &-banner {
       padding: 0.75rem;
@@ -632,6 +634,44 @@
 }
 
 @media (max-width: 480px) {
+  .contacts {
+    &-body {
+      width: 95%;
+      padding: 0 0.5rem 0.5rem 0.5rem;
+    }
+
+    &-empty-state {
+      padding: 2rem 1rem;
+      min-height: 250px;
+
+      .contacts-empty-icon {
+        svg {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      h3 {
+        font-size: 1.125rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+      }
+    }
+
+    &-letter {
+      &-divider {
+        margin: 0.75rem 0;
+
+        span {
+          font-size: 0.65rem;
+          padding: 0.15rem 0.5rem;
+        }
+      }
+    }
+  }
+
   .contact {
     &-banner {
       padding: 0.5rem;
@@ -711,6 +751,25 @@
           color: white;
           transform: scale(0.95);
         }
+      }
+    }
+  }
+
+  .contacts-actions {
+    button {
+      padding: 1rem 1.5rem;
+
+      &:hover {
+        transform: none;
+      }
+
+      &:active {
+        background-color: var(--primary-dark);
+        transform: scale(0.98);
+      }
+
+      &:last-child:active {
+        background-color: var(--gray-300);
       }
     }
   }

@@ -133,6 +133,28 @@ function Contacts() {
         );
     };
 
+    const groupContactsByLetter = (contacts: Contact[]) => {
+        const grouped: { [key: string]: Contact[] } = {};
+
+        contacts.forEach(contact => {
+            const firstLetter = contact.name.charAt(0).toUpperCase();
+            if (!grouped[firstLetter]) {
+                grouped[firstLetter] = [];
+            }
+            grouped[firstLetter].push(contact);
+        });
+
+        // Sorteer de letters
+        const sortedLetters = Object.keys(grouped).sort();
+
+        // Sorteer de contacten per lettergroep op naam
+        sortedLetters.forEach(letter => {
+            grouped[letter].sort((a, b) => a.name.localeCompare(b.name));
+        });
+
+        return { grouped, sortedLetters };
+    };
+
     return (
         <div className="contacts-wrapper">
             <div className="contacts-scroll-wrapper">
@@ -168,9 +190,19 @@ function Contacts() {
 
                         <div className="contacts-content">
                             {filteredContacts.length > 0 ? (
-                                filteredContacts.map(contact => (
-                                    <ContactBanner key={contact.id} {...contact} />
-                                ))
+                                (() => {
+                                    const {grouped, sortedLetters} = groupContactsByLetter(filteredContacts);
+                                    return sortedLetters.map(letter => (
+                                        <div key={letter} className="contacts-letter-group">
+                                            <div className="contacts-letter-divider">
+                                                <span>{letter}</span>
+                                            </div>
+                                            {grouped[letter].map(contact => (
+                                                <ContactBanner key={contact.id} {...contact} />
+                                            ))}
+                                        </div>
+                                    ));
+                                })()
                             ) : (
                                 !loading && renderEmptyState()
                             )}
