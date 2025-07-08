@@ -2,6 +2,7 @@ import express, {Request, Response} from "express";
 import cors from "cors";
 import pool from "./hooks/Pool";
 import jwt from 'jsonwebtoken';
+import {ResultSetHeader} from "mysql2";
 
 const bcrypt = require('bcrypt');
 const app = express();
@@ -386,6 +387,78 @@ app.post("/api/contacts/update", async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Er is iets misgegaan bij het updaten" });
+    }
+});
+
+app.post("/api/contacts/new", async (req: Request, res: Response) => {
+    const { user_id, updates } = req.body;
+
+    if (!user_id || !updates)
+        return res.status(400).json({ message: "user_id, contact_id en updates zijn verplicht" });
+
+    const {
+        name = null,
+        username = null,
+        email = null,
+        phone_number = null,
+        relationship = null,
+        address = null
+    } = updates;
+
+    try {
+        const [result] = await pool.query<ResultSetHeader>(
+            'INSERT INTO contacts (user_id, name, username, email, phone_number, relationship) VALUES (?, ?, ?, ?, ?, ?)',
+            [user_id, name, username, email, phone_number, relationship]
+        );
+
+        const contact_id = result.insertId;
+
+        if (address && contact_id) {
+            const {
+                street = null,
+                city = null,
+                province = null,
+                postal_code = null,
+                country = null
+            } = address;
+
+            await pool.query(
+                `INSERT INTO addresses (contact_id, street, city, province, postal_code, country) VALUES (?, ?, ?, ?, ?, ?)`,
+                [contact_id, street, city, province, postal_code, country]
+            );
+        }
+
+        res.json({
+            success: true,
+            message: "Succesvol aangemaakt"
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Er is iets misgegaan bij het aanmaken van een nieuw contact" });
+    }
+});
+
+app.post("/api/contacts/delete", async (req: Request, res: Response) => {
+    const { user_id, contact_id } = req.body;
+
+    if (!user_id || !contact_id)
+        return res.status(400).json({ message: "user_id en contact_id zijn verplicht" });
+
+    try {
+        await pool.query(
+            `DELETE FROM contacts WHERE user_id = ? AND id = ?`,
+            [user_id, contact_id]
+        );
+
+        await pool.query(
+            `DELETE FROM addresses WHERE contact_id = ?`,
+            [contact_id]
+        );
+
+        res.json({ success: true, message: "Contact succesvol verwijderd" });
+    } catch (error) {
+        console.error("Fout bij verwijderen van contact:", error);
+        res.status(500).json({ success: false, message: "Er is iets misgegaan bij het verwijderen van het contact" });
     }
 });
 
