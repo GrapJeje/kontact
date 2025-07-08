@@ -217,13 +217,15 @@ function User() {
                     </div>
                 )}
 
-                <button className="save-button" onClick={handleSave}>
-                    Opslaan
-                </button>
+                <div className="option-btn">
+                    <button className="save-button btn" onClick={handleSave}>
+                        Opslaan
+                    </button>
 
-                <button className="save-button" onClick={handleDelete}>
-                    Verwijder
-                </button>
+                    <button className="delete-button btn" onClick={handleDelete}>
+                        Verwijderen
+                    </button>
+                </div>
             </div>
         </div>
     );
