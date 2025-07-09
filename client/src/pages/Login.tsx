@@ -56,7 +56,7 @@ function Login() {
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: { target: { name: any; value: any; }; }) => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
 

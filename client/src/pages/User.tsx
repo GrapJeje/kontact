@@ -71,14 +71,22 @@ function User() {
 
             if (field.includes('.')) {
                 const [parent, child] = field.split('.');
+                const parentValue = prev[parent as keyof Contact];
+
+                const spreadableValue =
+                    typeof parentValue === 'object' && parentValue !== null
+                        ? parentValue
+                        : {};
+
                 return {
                     ...prev,
                     [parent]: {
-                        ...prev[parent as keyof Contact],
-                        [child]: value
-                    }
+                        ...spreadableValue,
+                        [child]: value,
+                    },
                 } as Contact;
             }
+
             return {
                 ...prev,
                 [field]: value

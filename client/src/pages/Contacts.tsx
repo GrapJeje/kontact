@@ -48,7 +48,7 @@ function Contacts() {
             setFilteredContacts(
                 searchTerm.trim() === ""
                     ? data
-                    : data.filter(contact =>
+                    : data.filter((contact: { name: string; }) =>
                         contact.name.toLowerCase().includes(searchTerm.toLowerCase())
                     ));
         } catch (error) {

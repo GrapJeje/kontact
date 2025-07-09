@@ -18,7 +18,7 @@ function Register() {
 
     const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         setMessage("");
 
@@ -45,12 +45,12 @@ function Register() {
             setTimeout(() => navigate("/login"), 2000);
 
         } catch (err) {
-            setMessage(err.message || "Er is een fout opgetreden bij de registratie");
+            setMessage(err instanceof Error ? err.message : "Er is een fout opgetreden bij de registratie");
             console.error("Registratie fout:", err);
         }
     }
 
-    const handleChange = (e) => {
+    const handleChange = (e: { target: { name: any; value: any; }; }) => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
